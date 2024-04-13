@@ -1,0 +1,32 @@
+services:
+  web: 
+    container_name: webapp
+    build:
+      context: ./app
+      target: builder
+    command: python manage.py runserver 0.0.0.0:8000
+    ports: 
+      - '8085:8000'
+    expose:
+      - '8000'
+    volumes:
+      - ./app/:/usr/src/app/
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+  
+  db:
+    container_name: postgresdb
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=flydbadmin
+      - POSTGRES_PASSWORD=flydbadmin
+      - POSTGRES_DB=flydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
